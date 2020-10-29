@@ -1,6 +1,18 @@
 public class AccountTriggerHandler implements TriggerInterface{
 
     public void afterInsert(List<SObject> newRecordsList){
+        List<Id> accsToSync = new List<Id>();
+
+        for(Account a: (List<Account>) newRecordsList) {
+            if(a.External_Id__c == null) {
+                accsToSync.add(a.Id);
+            }
+        }
+
+        if(!accsToSync.isEmpty()) {
+            AccountRestClient.insertAccountsToRemote(accsToSync);
+        }
+        
 
     }
     
