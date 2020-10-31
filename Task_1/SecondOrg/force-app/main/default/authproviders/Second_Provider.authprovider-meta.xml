@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<AuthProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <consumerKey>3MVG9n_HvETGhr3A9V3LUqfBtuuBMP0R9irYgyzhxkEMRC2yMcaXIDnC1M4PLGPsEYdq8qq2F8XwJBPh1HbmC</consumerKey>
+    <consumerSecret>6XQkEeWrg/moADK+KrJRYuwZx04lr4JZ8JRVMomWO7cyzb20aXAM6JJDW0HRN9AC998hs0sE3aapNAHRNKHpyXBBGPdiC2rX</consumerSecret>
+    <defaultScopes>api refresh_token</defaultScopes>
+    <friendlyName>Second_Provider</friendlyName>
+    <includeOrgIdInIdentifier>true</includeOrgIdInIdentifier>
+    <providerType>Salesforce</providerType>
+    <sendAccessTokenInHeader>false</sendAccessTokenInHeader>
+    <sendClientCredentialsInHeader>false</sendClientCredentialsInHeader>
+    <sendSecretInApis>true</sendSecretInApis>
+</AuthProvider>
