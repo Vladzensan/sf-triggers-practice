@@ -18,25 +18,24 @@ public class AccountTriggerHandler implements TriggerInterface {
             AccountRestClient.insertAccountsToRemote(accsToSync);
         }
     }
-    
-    public void beforeUpdate(List<SObject> newRecordsList, List<SObject> oldRecordsList){
+
+    public void afterUpdate(List<SObject> newRecordsList, List<SObject> oldRecordsList){
         Map<Id, Account> newMap = new Map<Id, Account>((List<Account>) newRecordsList);
         Map<Id, Account> oldMap = new Map<Id, Account>((List<Account>) oldRecordsList);
         List<Id> accsForRemoteUpdate = new List<Id>();
 
+        Boolean isExternal = String.valueOf(System.URL.getCurrentRequestUrl().getPath()).contains('composite');
+
         for(Account newAcc: (List<Account>)newRecordsList) {
             Account oldAcc = oldMap.get(newAcc.Id);
-            Boolean isToUpdate = false;
 
-            if(!newAcc.Is_External__c) {
+            if(!isExternal) {
                 for(String field : fieldsToCompare) {
                     if((String) newAcc.get(field) != (String) oldAcc.get(field)) {
                         accsForRemoteUpdate.add(newAcc.Id);
                         break;
                     }
                 }
-            } else {
-                newAcc.Is_External__c = false; // since accounts are provided from Trigger.new in before action -> it will be committed to DB
             }
         }
 
@@ -44,14 +43,27 @@ public class AccountTriggerHandler implements TriggerInterface {
             AccountRestClient.updateAccountsInRemote(accsForRemoteUpdate);
         }
     }
-
-    public void beforeDelete(List<SObject> oldRecordsList){
-        
+    
+    public void beforeUpdate(List<SObject> newRecordsList, List<SObject> oldRecordsList){
     }
 
     public void beforeInsert(List<SObject> newRecordsList){}
 
-    public void afterUpdate(List<SObject> newRecordsList, List<SObject> oldRecordsList){}
+    public void beforeDelete(List<SObject> oldRecordsList){
+        Boolean isExternal = String.valueOf(System.URL.getCurrentRequestUrl().getPath()).contains('composite');
+
+        if(!isExternal) {
+            List<Id> externalIds = new List<Id>();
+            for(Account a: (List<Account>) oldRecordsList) {
+                externalIds.add(a.External_Id__c);
+                
+            }
+
+            if(!externalIds.isEmpty()) {
+                AccountRestClient.deleteAccountsFromRemote(externalIds);
+            }
+        }
+    }
 
     public void afterDelete(List<SObject> oldRecordsList){}
 
